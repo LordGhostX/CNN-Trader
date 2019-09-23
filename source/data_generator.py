@@ -32,8 +32,8 @@ def generate_chart(chart_df, index):
     img = img.resize((160, 120), Image.ANTIALIAS)
     img.save(img_name)
 
-    #print("Generated {}".format(img_name))
-    return np.array(img.getdata())
+    # print("Generated {}".format(img_name))
+    # return np.array(img.getdata())
 
 if __name__ == "__main__":
     # params
@@ -41,16 +41,18 @@ if __name__ == "__main__":
     future_classification_level = 10
 
     # read csv data
-    df = pd.read_csv("data/BTCUSD_1h.csv")[::-1][:2000][::-1]
+    df = pd.read_csv("data/BTCUSD_1h.csv")[::-1][:2030][::-1]
     df.reset_index(inplace=True)
 
     # generate image data from csv
     index = 1
-    img_csv = ",".join(map(str, range(19200))) + ",target\n"
+    img_csv = "id,target\n"
+
+    print("Starting Generation...")
     for i in range(bars_per_image, len(df) - future_classification_level):
         img_data = generate_chart(df[i - bars_per_image: i], index)
         target = int(df.close[i] <= df.close[i + future_classification_level])
-        img_csv += ",".join(map(str, img_data)) + "," + str(target) + "\n"
+        img_csv += "{},{}\n".format(index, target)
         index += 1
     with open("data/labels.csv", "w") as f:
         f.write(img_csv)
