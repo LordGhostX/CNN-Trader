@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from os.path import basename
 from PIL import Image
 from mpl_finance import candlestick_ohlc
 
@@ -34,6 +35,7 @@ def generate_chart(chart_df, index):
 
     # print("Generated {}".format(img_name))
     # return np.array(img.getdata())
+    return basename(img_name)
 
 if __name__ == "__main__":
     # params
@@ -41,7 +43,8 @@ if __name__ == "__main__":
     future_classification_level = 10
 
     # read csv data
-    df = pd.read_csv("data/BTCUSD_1h.csv")[::-1][:2030][::-1]
+    limit = 3000
+    df = pd.read_csv("data/BTCUSD_1h.csv")[::-1][:limit + bars_per_image + future_classification_level][::-1]
     df.reset_index(inplace=True)
 
     # generate image data from csv
@@ -50,9 +53,9 @@ if __name__ == "__main__":
 
     print("Starting Generation...")
     for i in range(bars_per_image, len(df) - future_classification_level):
-        img_data = generate_chart(df[i - bars_per_image: i], index)
+        img_name = generate_chart(df[i - bars_per_image: i], index)
         target = int(df.close[i] <= df.close[i + future_classification_level])
-        img_csv += "{},{}\n".format(index, target)
+        img_csv += "{},{}\n".format(img_name, target)
         index += 1
     with open("data/labels.csv", "w") as f:
         f.write(img_csv)
