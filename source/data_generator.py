@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
     # read csv data
     limit = 3000
-    df = pd.read_csv("data/BTCUSD_1h.csv")[::-1][:limit + bars_per_image + future_classification_level][::-1]
+    df = pd.read_csv("data/BTCUSD_1h.csv")#[::-1][:limit + bars_per_image + future_classification_level][::-1]
     df.reset_index(inplace=True)
 
     # generate image data from csv
